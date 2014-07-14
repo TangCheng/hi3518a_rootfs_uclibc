@@ -1,0 +1,77 @@
+#!/bin/sh
+# Useage: ./load3518_stage3 [ -r|-i|-a ] [ sensor ]
+#         -r : rmmod all modules
+#         -i : insmod all modules
+#    default : rmmod all moules and then insmod them
+#
+
+
+# AR0130 AR0331 NT99141
+SNS_A=`./load3518_stage2 | awk '{print $2}'`
+
+if [ $# -ge 2 ]; then
+    SNS_A=$2
+fi
+
+report_error()
+{
+    echo "******* Error: There's something wrong, please check! *****"
+    exit 1
+}
+
+insert_sns()
+{
+    case $SNS_A in
+        AR0130|AR0331)
+            himm 0x20030030 0x5;              #Sensor clock 27 MHz
+            insmod extdrv/ssp_ad9020.ko
+	    ;;
+	NT99141)
+            himm 0x20030030 0x1;              #Sensor clock 24 MHz
+            ;;
+        *)
+            echo "xxxx Invalid sensor type $SNS_A xxxx"
+            report_error;;
+    esac
+}
+
+remove_sns()
+{
+    rmmod ssp_ad9020 &> /dev/null
+}
+
+load_usage()
+{
+    echo "Usage:  ./load3518_stage3 [-option] [sensor_name]"
+    echo "options:"
+    echo "    -i sensor_name           insert modules"
+    echo "    -r                       remove modules"
+    echo "    -a sensor_name           remove modules first, then insert modules"
+    echo "    -h                       help information"
+    echo -e "Available sensors: AR0130, AR0331, NT99141"
+    echo -e "for example: ./load3518_stage3 -a AR0130 \n"
+}
+
+# load module.
+echo "==== Sensor type is $SNS_A ===="
+if [ "$1" = "-i" ]
+then
+    insert_sns
+fi
+
+if [ "$1" = "-r" ]
+then
+    remove_sns
+fi
+
+if [ "$1" = "-h" ]
+then
+    load_usage
+    exit
+fi
+
+if [ $# -eq 0 ] || [ "$1" = "-a" ]
+then
+    remove_sns
+    insert_sns
+fi

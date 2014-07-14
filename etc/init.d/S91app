@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ -e /opt/imedia/imedia ]; then
+  cd /opt/imedia
+  SENSOR_TYPE=`/opt/ko/load3518_stage2 | awk '{print $2}'`
+  export SENSOR_TYPE=${SENSOR_TYPE}
+  ./imedia &
+  cd -
+fi
+
+if [ -e /opt/irtsp/irtsp ]; then
+  cd /opt/irtsp
+  ./irtsp &
+  cd -
+fi
