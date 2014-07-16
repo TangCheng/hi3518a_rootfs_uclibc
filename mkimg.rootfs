@@ -31,11 +31,15 @@ do
 		mkimage -A arm -T ramdisk -C none -a 0 -e 0 -n "initrd in cramfs" -d $rootfs_image_prepath.temp $rootfs_image_prepath.cramfs.initrd
 		rm $rootfs_dir $rootfs_image_prepath.temp -f
 		;;
-	 "cramfs-initrd-img")
+	"cramfs-initrd-img")
 		echo "making filesystem image cramfs-initrd ..."
 		mkfs.cramfs $rootfs_dir $rootfs_image_prepath.temp
 		mkimage -A arm -T ramdisk -C none -a 0xe1100000 -e 0xe1100000 -n "initrd in cramfs" -d $rootfs_image_prepath.temp $rootfs_image_prepath.cramfs.initrd.img
 		rm $rootfs_dir $rootfs_image_prepath.temp -f
+		;;
+	"squashfs")
+		echo "making filesystem image squashfs ..."
+		mksquashfs $rootfs_dir $rootfs_image_prepath.squashfs -comp xz -all-root -b 256K
 	esac
 
 	shift
