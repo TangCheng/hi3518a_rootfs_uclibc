@@ -1,5 +1,19 @@
 #!/bin/sh
 
+if [ -e /usr/bin/timer ]; then
+  timer &
+fi
+
+if [ -e /opt/iconfig/iconfig ]; then
+  cd /opt/iconfig
+  ./iconfig &
+fi
+
+if [ -e /opt/ionvif/ionvif ]; then
+  cd /opt/ionvif
+  ./ionvif &
+fi
+
 if [ -e /opt/imedia/imedia ]; then
   cd /opt/imedia
   SENSOR_TYPE=`/opt/ko/load3518_stage2 | awk '{print $2}'`
@@ -12,4 +26,9 @@ if [ -e /opt/irtsp/irtsp ]; then
   cd /opt/irtsp
   ./irtsp &
   cd -
+fi
+
+if [ -e /opt/iupdate/iupdate ]; then
+  cd /opt/iupdate
+  ./iupdate &
 fi
